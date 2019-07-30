@@ -44,7 +44,7 @@ class ClassificationMethod:
         To make the classifier generic to multiple problems, the data should be represented
         as lists of Counters containing feature descriptions and their counts.
         """
-        raise NotImplementedError
+        abstract
 
     def classify(self, data):
         """

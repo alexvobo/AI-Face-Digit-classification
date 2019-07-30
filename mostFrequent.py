@@ -18,8 +18,7 @@ class MostFrequentClassifier(classificationMethod.ClassificationMethod):
     """
 
     def __init__(self, legalLabels):
-        super().__init__(legalLabels)
-        self.guess = None
+        self.guess = NoneenhancedFeatureExtractorDigit
         self.type = "mostfrequent"
 
     def train(self, data, labels, validationData, validationLabels):

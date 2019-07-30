@@ -60,7 +60,7 @@ class Datum:
         DATUM_WIDTH = width
         self.height = DATUM_HEIGHT
         self.width = DATUM_WIDTH
-        if data is None:
+        if data == None:
             data = [[' ' for i in range(DATUM_WIDTH)] for j in range(DATUM_HEIGHT)]
         self.pixels = util.arrayInvert(convertToInteger(data))
 
@@ -68,7 +68,6 @@ class Datum:
         """
         Returns the value of the pixel at column, row as 0, or 1.
         """
-
         return self.pixels[column][row]
 
     def getPixels(self):
@@ -84,12 +83,15 @@ class Datum:
         rows = []
         data = util.arrayInvert(self.pixels)
         for row in data:
-            ascii = map(asciiGrayscaleConversionFunction, row)
+            ascii = list(map(asciiGrayscaleConversionFunction, row))
             rows.append("".join(ascii))
         return "\n".join(rows)
 
     def __str__(self):
         return self.getAsciiString()
+
+    def __repr__(self):
+        return repr((self.pixels))
 
 
 # Data processing, cleanup and display functions
@@ -100,7 +102,7 @@ def loadDataFile(filename, n, width, height):
 
     (Return less then n items if the end of file is encountered).
     """
-    DATUM_WIDTH = width
+    DATUM_WIDTH = width # 28 x 28
     DATUM_HEIGHT = height
     fin = readlines(filename)
     fin.reverse()
@@ -111,8 +113,9 @@ def loadDataFile(filename, n, width, height):
             data.append(list(fin.pop()))
         if len(data[0]) < DATUM_WIDTH - 1:
             # we encountered end of file...
-            print("Truncating at %d examples (maximum)" % i)
+            print(("Truncating at %d examples (maximum)" % i))
             break
+        # print(data)
         items.append(Datum(data, DATUM_WIDTH, DATUM_HEIGHT))
     return items
 
@@ -123,7 +126,7 @@ import os
 
 def readlines(filename):
     "Opens a file or reads it from the zip archive data.zip"
-    if os.path.exists(filename):
+    if (os.path.exists(filename)):
         return [l[:-1] for l in open(filename).readlines()]
     else:
         z = zipfile.ZipFile('data.zip')
@@ -174,7 +177,7 @@ def convertToInteger(data):
     if type(data) != type([]):
         return IntegerConversionFunction(data)
     else:
-        return map(convertToInteger, data)
+        return list(map(convertToInteger, data))
 
 
 # Testing
@@ -187,13 +190,20 @@ def _test():
     #  labels = loadLabelsFile("facedata/facedatatrainlabels", n)
     items = loadDataFile("digitdata/trainingimages", n, 28, 28)
     labels = loadLabelsFile("digitdata/traininglabels", n)
-    for i in range(1):
-        print(items[i])
-        print(items[i])
-        print(items[i].height)
-        print(items[i].width)
-        print(dir(items[i]))
-        print(items[i].getPixels())
+
+    print(items)
+    print(labels)
+
+
+
+    # for i in range(1):
+    #     print(items[i])
+    #     print(items[i])
+    #     print(items[i].height)
+    #     print(items[i].width)
+    #     print(dir(items[i]))
+    #     print(items[i].getPixels())
+
 
 
 if __name__ == "__main__":

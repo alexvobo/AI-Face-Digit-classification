@@ -43,28 +43,17 @@ class PerceptronClassifier:
         datum is a counter from features to values for those features
         (and thus represents a vector a values).
         """
-
-        #self.features = list(trainingData)[0].keys()  # could be useful later
+        # print(list(trainingData[0]))
+        self.features = list(trainingData[0].keys())  # could be useful later
         # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
         # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
 
         for iteration in range(self.max_iterations):
-            print("Starting iteration ", iteration, "...")
-            for i in range(len(list(trainingData))):
+            print(("Starting iteration ", iteration, "..."))
+            for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
-                "y = true label"
-                y = trainingLabels[i]
-                "yPrime = guess"
-                yPrime = self.classify(trainingData[i])
 
-                if yPrime == y:
-                    print("Guess Correct")
-                else:
-                    print("We have guessed y' but should have guessed y")
-                    self.weights[y].__add__(trainingData[i])
-                    self.weights[yPrime].__sub__(trainingData[i])
-
-                #util.raiseNotDefined()
+                util.raiseNotDefined()
 
     def classify(self, data):
         """
@@ -85,11 +74,9 @@ class PerceptronClassifier:
         """
         Returns a list of the 100 features with the greatest weight for some label
         """
+        featuresWeights = []
 
         "*** YOUR CODE HERE ***"
-        #util.raiseNotDefined()
-
-        "Util method sortedKeys sorts the keys from greatest to lowest weight, so we return the first 100 for some label using the data structure in __init__"
-        featuresWeights = self.weights[label].sortedKeys()[:100]
+        util.raiseNotDefined()
 
         return featuresWeights
