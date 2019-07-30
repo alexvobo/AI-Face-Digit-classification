@@ -10,6 +10,7 @@ import sys
 import inspect
 import heapq
 import random
+from functools import cmp_to_key
 
 """
  Data structures useful for implementing SearchAgents
@@ -181,7 +182,7 @@ class Counter(dict):
         all = self.items()
         values = [x[1] for x in all]
         maxIndex = values.index(max(values))
-        return all[maxIndex][0]
+        return list(all)[maxIndex][0]
 
     def sortedKeys(self):
         """
@@ -196,8 +197,8 @@ class Counter(dict):
         ['second', 'third', 'first']
         """
         sortedItems = self.items()
-        compare = lambda x, y: sign(y[1] - x[1])
-        sortedItems.sort(cmp=compare)
+        compare = lambda x, y: (sign(y[1] - x[1]))
+        sorted(sortedItems, key=cmp_to_key(compare))
         return [x[0] for x in sortedItems]
 
     def totalCount(self):

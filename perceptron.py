@@ -45,6 +45,7 @@ class PerceptronClassifier:
         """
         # print(list(trainingData[0]))
         self.features = list(trainingData[0].keys())  # could be useful later
+        print(self.features)
         # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
         # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
 
@@ -53,7 +54,19 @@ class PerceptronClassifier:
             for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
 
-                util.raiseNotDefined()
+                "y = true label"
+                y = trainingLabels[i]
+                "yPrime = guess"
+                yPrime = self.classify(trainingData[0])[i]
+                print(yPrime)
+                print(y)
+                if yPrime == y:
+
+                    print("Guess Correct")
+                else:
+                    print("We have guessed %s but should have guessed %s")
+                    self.weights[y].__radd__(trainingData[i])
+                    self.weights[yPrime].__sub__(trainingData[i])
 
     def classify(self, data):
         """
@@ -77,6 +90,6 @@ class PerceptronClassifier:
         featuresWeights = []
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        featuresWeights = self.weights[label].sortedKeys()[:100]
 
         return featuresWeights
