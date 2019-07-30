@@ -60,7 +60,7 @@ class Datum:
         DATUM_WIDTH = width
         self.height = DATUM_HEIGHT
         self.width = DATUM_WIDTH
-        if data == None:
+        if data is None:
             data = [[' ' for i in range(DATUM_WIDTH)] for j in range(DATUM_HEIGHT)]
         self.pixels = util.arrayInvert(convertToInteger(data))
 
@@ -68,6 +68,7 @@ class Datum:
         """
         Returns the value of the pixel at column, row as 0, or 1.
         """
+
         return self.pixels[column][row]
 
     def getPixels(self):
@@ -110,8 +111,7 @@ def loadDataFile(filename, n, width, height):
             data.append(list(fin.pop()))
         if len(data[0]) < DATUM_WIDTH - 1:
             # we encountered end of file...
-            print
-            "Truncating at %d examples (maximum)" % i
+            print("Truncating at %d examples (maximum)" % i)
             break
         items.append(Datum(data, DATUM_WIDTH, DATUM_HEIGHT))
     return items
@@ -123,7 +123,7 @@ import os
 
 def readlines(filename):
     "Opens a file or reads it from the zip archive data.zip"
-    if (os.path.exists(filename)):
+    if os.path.exists(filename):
         return [l[:-1] for l in open(filename).readlines()]
     else:
         z = zipfile.ZipFile('data.zip')
@@ -188,16 +188,12 @@ def _test():
     items = loadDataFile("digitdata/trainingimages", n, 28, 28)
     labels = loadLabelsFile("digitdata/traininglabels", n)
     for i in range(1):
-        print
-        items[i]
-        print
-        items[i]
+        print(items[i])
+        print(items[i])
         print(items[i].height)
         print(items[i].width)
-        print
-        dir(items[i])
-        print
-        items[i].getPixels()
+        print(dir(items[i]))
+        print(items[i].getPixels())
 
 
 if __name__ == "__main__":

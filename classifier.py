@@ -9,7 +9,6 @@
 # This file contains feature extraction methods and harness
 # code for data classification
 
-# import mostFrequent
 import mostFrequent
 import naiveBayes
 import perceptron

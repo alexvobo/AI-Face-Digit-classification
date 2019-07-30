@@ -18,6 +18,7 @@ class MostFrequentClassifier(classificationMethod.ClassificationMethod):
     """
 
     def __init__(self, legalLabels):
+        super().__init__(legalLabels)
         self.guess = None
         self.type = "mostfrequent"
 
