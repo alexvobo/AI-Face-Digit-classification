@@ -60,8 +60,10 @@ class PerceptronClassifier:
 
                 if yPrime != y:
                     print("We have guessed {} but should have guessed {}".format(yPrime, y))
-                    self.weights[y] += (trainingData[i])
-                    self.weights[yPrime] -= (trainingData[i])
+
+                    "Uses util.py methods to increment/decrement counters"
+                    self.weights[y].__radd__(trainingData[i])
+                    self.weights[yPrime].__sub__(trainingData[i])
 
     def classify(self, data):
         """
@@ -84,6 +86,8 @@ class PerceptronClassifier:
         """
 
         "*** YOUR CODE HERE ***"
+
+        "Sorts features using sortedKeys method, which sorts weights from greatest to least. Returns first 100."
         featuresWeights = self.weights[label].sortedKeys()[:100]
 
         return featuresWeights
