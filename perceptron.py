@@ -54,19 +54,15 @@ class PerceptronClassifier:
             for i in range(len(trainingData)):
                 "*** YOUR CODE HERE ***"
 
-                "y = true label"
+                "y = actual label value"
                 y = trainingLabels[i]
-                "yPrime = guess"
-                yPrime = self.classify(trainingData[0])[i]
-                print(yPrime)
-                print(y)
-                if yPrime == y:
+                "yPrime = what program guesses"
+                yPrime = self.classify([trainingData[i]])[0]
 
-                    print("Guess Correct")
-                else:
-                    print("We have guessed %s but should have guessed %s")
-                    self.weights[y].__radd__(trainingData[i])
-                    self.weights[yPrime].__sub__(trainingData[i])
+                if yPrime != y:
+                    print("We have guessed {} but should have guessed {}".format(yPrime, y))
+                    self.weights[y] += (trainingData[i])
+                    self.weights[yPrime] -= (trainingData[i])
 
     def classify(self, data):
         """
@@ -87,7 +83,6 @@ class PerceptronClassifier:
         """
         Returns a list of the 100 features with the greatest weight for some label
         """
-        featuresWeights = []
 
         "*** YOUR CODE HERE ***"
         featuresWeights = self.weights[label].sortedKeys()[:100]
