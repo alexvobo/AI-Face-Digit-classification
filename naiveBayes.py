@@ -63,7 +63,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         """
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        #util.raiseNotDefined()
 
     def classify(self, testData):
         """
@@ -91,8 +91,21 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         logJoint = util.Counter()
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # Prior = probability of label (number of times label appears in our trainingLabels out of all the other label values)
+        # Datum = (feature,value)
 
+        # loop through all of the legal labels, initialize logJoint[label] to log(probability of label)
+        for label in self.legalLabels:
+            logJoint[label] = math.log(self.prior[label])
+            # loop through all the features and their values in datum
+            # Adjusted probability is the sum of log(prior probability) and the conditional probability given features, label.
+            for feature, value in datum.items():
+                # If value given feature is 1, the event occurs and we add the conditional probability,
+                # Otherwise if value is 0, the event does not occur and we add the probability of the event not occuring (1- conditional probability)
+                probability = self.conditional(feature, label) if value == 1 else (1 - self.conditional(feature, label))
+                logJoint[label] += math.log(probability)
+
+        # Return the adjusted probability given features,values for label l -> (posterior)
         return logJoint
 
     def findHighOddsFeatures(self, label1, label2):
@@ -105,9 +118,6 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         featuresOdds = []
 
         "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        # util.raiseNotDefined()
 
         return featuresOdds
-
-
-
