@@ -118,6 +118,11 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         featuresOdds = []
 
         "*** YOUR CODE HERE ***"
-        # util.raiseNotDefined()
+        # Calculates the conditional probability of a feature given two labels. Appends the ratio to featuresOdds in tuple form: (feature, ratio)
+        for feature in self.features:
+            featuresOdds.append(feature, (self.conditional(feature, label1) / self.conditional(feature, label2)))
 
-        return featuresOdds
+        # Sorts by greatest odds, returns 100 features with highest ratio.
+        # featureRatio is a tuple: (feature, ratio) in featuresOdds, so featureRatio[1] is the ratio in the pair.
+        # DOES NOT WORK PROPERLY YET, NEED TO RETURN JUST THE FEATURES.
+        return sorted(featuresOdds, key=lambda featureRatio: float(featureRatio[1]), reverse=True)[:100]
