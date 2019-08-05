@@ -63,7 +63,38 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         """
 
         "*** YOUR CODE HERE ***"
-        # util.raiseNotDefined()
+        '''
+            Prior Probability
+        '''
+        self.prior_probability = None
+        total_cnt_label = util.Counter()
+        total_cnt_label.incrementAll(self.legalLabels,0) # initialize for count how many each numbers have
+        # print(total_cnt_label)
+        for label in trainingLabels:
+            total_cnt_label.incrementAll([label], 1)
+            # total_cnt_label.normalize()
+        # total_cnt_label.normalize()
+        # print(total_cnt_label)
+        total_cnt_label.normalize()
+        self.prior_probability = total_cnt_label
+        # print(self.prior_probability)
+
+        '''
+            Conditional Probability
+        '''
+        self.cond_probability = None
+        total_features_labels = util.Counter() #{}
+        conditional_feature_label = util.Counter()
+        for i, current in enumerate(trainingData):
+            real_label = trainingLabels[i]
+            for feature, value in current.items():
+                if value >= 1:
+                    conditional_feature_label[feature, real_label] += 1
+                else:
+                    total_features_labels[feature, real_label] += 1
+
+        self.cond_probability = conditional_feature_label
+        print(self.cond_probability)
 
     def classify(self, testData):
         """
