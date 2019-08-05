@@ -1,5 +1,7 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
+\usepackage{tikz}
+\usepackage{graphicx}
 
 \title{Image Classification}
 \author{Jaehyun Kim, Alex Vobornov}
@@ -140,19 +142,45 @@
         \end{quote}
             
     \subsection{Training data}
-        \begin{table}[]
+        \begin{table}[h]
             \centering
             \begin{tabular}{c|c}
-                 &  \\
-                 & 
+                \hline
+                    Percentage & Training Data \\
+                \hline
+                    12\% & 2\\
+                \hline
+                    24\% & 5\\
+                \hline
+                    32\% & 14\\
+                \hline
+                    46\% & 38\\
+                \hline
+                    51\% & 40\\
+                \hline
+                    62\% & 100\\
+                \hline
+                    69\% & 330\\
+                \hline
+                    75\% & 420\\
+                \hline
+                    75\% & 1000\\
+                \hline
             \end{tabular}
-            \caption{Caption}
-            \label{tab:my_label}
+            \caption{Percentage of traing data with iteration 3}
         \end{table}
-    \subsection{analysis}
-        To analyze for our accuracy, we calculate percentage of validate data and test data. \newline
-        For valid data with 100 trained, it shows us 69 correct out of 100 (69.0\%). And for test data with 100 trained it shows us 62 correct out of 100 (62.0\%). \newline
+        \newpage
+        \begin{figure}[h]
+            \centering
+                \includegraphics[width=1.0\linewidth]{digitdata.PNG}
+            \caption{Digit training data}
+        \end{figure}
         
+    \subsection{analysis}
+        \subsubsection{Digit}
+            To analyze for our accuracy, we calculate percentage of validate data and test data. \newline
+            For valid data with 100 trained, it shows us 69 correct out of 100 (69.0\%). And for test data with 100 trained it shows us 62 correct out of 100 (62.0\%).
+        \subsubsection{Face}
 
 
 \section{Naive Bayes}
