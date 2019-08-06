@@ -14,7 +14,6 @@ import math
 class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     """
     See the project description for the specifications of the Naive Bayes classifier.
-
     Note that the variable 'datum' in this code refers to a counter of features
     (not to a raw samples.Datum).
     """
@@ -54,21 +53,22 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         stores the Laplace smoothed estimates so that they can be used to classify.
         Evaluate each value of k in kgrid to choose the smoothing parameter
         that gives the best accuracy on the held-out validationData.
-
         trainingData and validationData are lists of feature Counters.  The corresponding
         label lists contain the correct label for each datum.
-
         To get the list of all possible features or labels, use self.features and
         self.legalLabels.
         """
 
         "*** YOUR CODE HERE ***"
         '''
-            Prior Probability
+         - Prior Probability
+            Calculate prior probability from trainging Labels. Count all labels using incrementAll func from util.Count() class.
+            After that, calculate prior probability of each labels using normalize function from util.Count() class.
         '''
+
         self.prior_probability = None
         total_cnt_label = util.Counter()
-        total_cnt_label.incrementAll(self.legalLabels,0) # initialize for count how many each numbers have
+        total_cnt_label.incrementAll(self.legalLabels, 0)  # initialize for count how many each numbers have
         # print(total_cnt_label)
         for label in trainingLabels:
             total_cnt_label.incrementAll([label], 1)
@@ -83,7 +83,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
             Conditional Probability
         '''
         self.cond_probability = None
-        total_features_labels = util.Counter() #{}
+        total_features_labels = util.Counter()  # {}
         conditional_feature_label = util.Counter()
         for i, current in enumerate(trainingData):
             real_label = trainingLabels[i]
@@ -93,13 +93,24 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
                 else:
                     total_features_labels[feature, real_label] += 1
 
-        self.cond_probability = conditional_feature_label
-        print(self.cond_probability)
+        for smooth in kgrid:
+            for label in self.legalLabels:
+                for feature in self.features:
+                    conditional_feature_label[feature, label] += smooth
+                    total_features_labels[feature,label] += smooth
+
+        condiprob = util.Counter()
+        for x, counts in conditional_feature_label.items():
+            # print(counts)
+            # print(total_features_labels[x])
+            condiprob[x] = counts / total_features_labels[x]
+        # print(codiprob)
+
+        self.conditional = condiprob
 
     def classify(self, testData):
         """
         Classify the data based on the posterior distribution over labels.
-
         You shouldn't modify this method.
         """
         guesses = []
@@ -115,7 +126,6 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         Returns the log-joint distribution over legal labels and the datum.
         Each log-probability should be stored in the log-joint counter, e.g.
         logJoint[3] = <Estimate of log( P(Label = 3, datum) )>
-
         To get the list of all possible features or labels, use self.features and
         self.legalLabels.
         """
@@ -127,13 +137,13 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         # loop through all of the legal labels, initialize logJoint[label] to log(prior)
 
         for label in self.legalLabels:
-            logJoint[label] = math.log(self.prior[label])
+            logJoint[label] = math.log(self.prior_probability[label])
             # loop through all the features and their values in datum
             # Adjusted probability is the sum of log(prior) and the conditional probability of features given the label.
             for feature, value in datum.items():
                 # If value for feature is 1, the event 'occurs' and we add the conditional probability,
                 # Otherwise if value is 0, the event does not occur and we add the probability of the event not occuring (1- conditional probability)
-                probability = self.conditional(feature, label) if value == 1 else (1 - self.conditional(feature, label))
+                probability = self.conditional(feature, label) if value > 1 else (1 - self.conditional(feature, label))
                 logJoint[label] += math.log(probability)
 
         # Return the adjusted probability for label l -> (posterior)
@@ -143,7 +153,6 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         """
         Returns the 100 best features for the odds ratio:
                 P(feature=1 | label1)/P(feature=1 | label2)
-
         Note: you may find 'self.features' a useful way to loop through all possible features
         """
         featuresOdds = []
