@@ -133,8 +133,6 @@
         We have guessed 2 but should have guessed 0\\
         \end{quote}
             
-
-        
         In this case, we updated the weights as \ $w^y = w^y + f$ \ and \ $w^y' = w^y' - f$.\ In the code, we uses util.py methods which are $\_\_$radd$\_\_$ and $\_\_$sub$\_\_$ to increment/decrement counters.
         \begin{quote}
             $self.weights[y].$\_\_$radd$\_\_$(trainingData[i])$\\
@@ -145,27 +143,29 @@
         \subsubsection{Digit}
             \begin{table}[h]
                 \centering
-                \begin{tabular}{c|c}
+                \begin{tabular}{c|c|c|c}
                     \hline
-                        Percentage & Training Data \\
+                        Training Data Used & Labels out of 5000 & Validation Accuracy & Test Accuracy \\
                     \hline
-                        12\% & 2\\
+                        10\% & 500 & 81\% & 76\%\\
                     \hline
-                        24\% & 5\\
+                        20\% & 1000 & 77\% & 79\%\\
                     \hline
-                        32\% & 14\\
+                        30\% & 1500 & 80\% & 78\%\\
                     \hline
-                        46\% & 38\\
+                        40\% & 2000 & 85\% & 77\%\\
                     \hline
-                        51\% & 40\\
+                        50\% & 2500 & 84\% & 82\%\\
                     \hline
-                        62\% & 100\\
+                        60\% & 3000 & 80\% & 82\%\\
                     \hline
-                        69\% & 330\\
+                        70\% & 3500 & 81\% & 84\%\\
                     \hline
-                        75\% & 420\\
+                        80\% & 4000 & 83\% & 86\%\\
                     \hline
-                        75\% & 1000\\
+                        90\% & 4500 & 84\% & 87\%\\
+                    \hline
+                        100\% & 5000 & 82\% & 86\%\\
                     \hline
                 \end{tabular}
                 \caption{Percentage of training data with iteration 3}
@@ -180,27 +180,30 @@
         \subsubsection{Face}
             \begin{table}[h]
                 \centering
-                \begin{tabular}{c|c}
+                \begin{tabular}{c|c|c|c}
                     \hline
-                        Percentage & Training Data \\
+                        Training Data Used & Labels out of 450 & Validation Accuracy & Test Accuracy \\
                     \hline
-                        47\% & 2\\
+                        10\% & 45 & 74\% & 62\%\\
                     \hline
-                        53\% & 5\\
+                        20\% & 90 & 91\% & 76\%\\
                     \hline
-                        62\% & 14\\
+                        30\% & 135 & 91\% & 72\%\\
                     \hline
-                        74\% & 38\\
+                        40\% & 180 & 94\% & 81\%\\
                     \hline
-                        81\% & 40\\
+                        50\% & 225 & 95\% & 79\%\\
                     \hline
-                        83\% & 100\\
+                        60\% & 270 & 99\% & 87\%\\
                     \hline
-                        84\% & 330\\
+                        70\% & 315 & 95\% & 80\%\\
                     \hline
-                        85\% & 420\\
+                        80\% & 360 & 93\% & 80\%\\
                     \hline
-                    
+                        90\% & 405 & 98\% & 82\%\\
+                    \hline
+                        100\% & 450 & 100\% & 85\%\\
+                    \hline
                 \end{tabular}
                 \caption{Percentage of face training data with iteration 3}
             \end{table}
