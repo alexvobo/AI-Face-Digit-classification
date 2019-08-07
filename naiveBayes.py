@@ -58,7 +58,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         self.legalLabels.
         """
 
-          "*** YOUR CODE HERE ***"
+        "*** YOUR CODE HERE ***"
         # print(self.legalLabels)
         # self.prior_probability is using at calculateLogJointProbabilities
         '''
@@ -66,7 +66,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         '''
         self.prior_probability = None
         total_cnt_label = util.Counter()
-        total_cnt_label.incrementAll(self.legalLabels,0) # initialize for count how many each numbers have
+        total_cnt_label.incrementAll(self.legalLabels, 0) # initialize for count how many each numbers have
         # print(total_cnt_label)
         for label in trainingLabels:
             total_cnt_label.incrementAll([label], 1)
@@ -75,45 +75,48 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         # print(total_cnt_label)
         total_cnt_label.normalize()
         self.prior_probability = total_cnt_label
-        print(self.prior_probability)
+        # print(self.prior_probability)
 
         '''
             Conditional Probability - likelihood
         '''
         self.conditional = None
         total_features_labels = util.Counter()  # {}
+        non_conditional_feature_label = util.Counter()
         conditional_feature_label = util.Counter()
         for i, current in enumerate(trainingData):
             real_label = trainingLabels[i]
             for feature, value in current.items():
                 if value >= 1:
-                    conditional_feature_label.incrementAll([feature, real_label],1)
-                    total_features_labels.incrementAll([feature, real_label], 1)
-                else:
-                    total_features_labels.incrementAll([feature, real_label],1)
+                    conditional_feature_label.incrementAll([(feature, real_label)], 1)
+                elif value == 0:
+                    non_conditional_feature_label.incrementAll([(feature, real_label)], 1)
 
+        total_features_labels = conditional_feature_label.__add__(non_conditional_feature_label)
+        # print(total_features_labels)
 
         '''
             Smoothing & conditional probability
         '''
         for label in self.legalLabels:
             for feature in self.features:
-                conditional_feature_label.incrementAll([feature, label], self.k)
-                total_features_labels.incrementAll([feature, label], self.k)
+                # self.k = 100
+                conditional_feature_label.incrementAll([(feature, label)], self.k)
+                non_conditional_feature_label.incrementAll([(feature, label)], self.k)
 
         tmp_condiprob = util.Counter()
         for i, value in conditional_feature_label.items():
             # print(value)
-            # print(value)
+            # print(i)
             # print(total_features_labels[i])
-            tmp_condiprob[i] = value / total_features_labels[i]
+            tmp_condiprob[i] = float(value) / total_features_labels[i]
         # print(tmp_condiprob)
 
         self.conditional = tmp_condiprob
         # predictions = self.classify(trainingData)
         # similar as perceptron
-        #
-        # yPrime = self.classify(trainingData)
+        self.classify(trainingData)
+        # print(yPrime)
         # if y != yPrime
 
 
