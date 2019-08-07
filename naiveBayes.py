@@ -58,16 +58,15 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         self.legalLabels.
         """
 
-        "*** YOUR CODE HERE ***"
+          "*** YOUR CODE HERE ***"
+        # print(self.legalLabels)
+        # self.prior_probability is using at calculateLogJointProbabilities
         '''
-         - Prior Probability
-            Calculate prior probability from trainging Labels. Count all labels using incrementAll func from util.Count() class.
-            After that, calculate prior probability of each labels using normalize function from util.Count() class.
+            Prior Probability
         '''
-
         self.prior_probability = None
         total_cnt_label = util.Counter()
-        total_cnt_label.incrementAll(self.legalLabels, 0)  # initialize for count how many each numbers have
+        total_cnt_label.incrementAll(self.legalLabels,0) # initialize for count how many each numbers have
         # print(total_cnt_label)
         for label in trainingLabels:
             total_cnt_label.incrementAll([label], 1)
@@ -88,29 +87,34 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
             real_label = trainingLabels[i]
             for feature, value in current.items():
                 if value >= 1:
-                    conditional_feature_label[feature, real_label] += 1
-                    total_features_labels[feature, real_label] += 1
+                    conditional_feature_label.incrementAll([feature, real_label],1)
+                    total_features_labels.incrementAll([feature, real_label], 1)
                 else:
-                    total_features_labels[feature, real_label] += 1
+                    total_features_labels.incrementAll([feature, real_label],1)
+
 
         '''
             Smoothing & conditional probability
         '''
         for label in self.legalLabels:
             for feature in self.features:
-                conditional_feature_label[feature, label] += self.k
-                total_features_labels[feature,label] += self.k
+                conditional_feature_label.incrementAll([feature, label], self.k)
+                total_features_labels.incrementAll([feature, label], self.k)
 
-        condiprob = util.Counter()
+        tmp_condiprob = util.Counter()
         for i, value in conditional_feature_label.items():
-            print(value)
+            # print(value)
             # print(value)
             # print(total_features_labels[i])
-            condiprob[i] = value / total_features_labels[i]
-        print(condiprob)
+            tmp_condiprob[i] = value / total_features_labels[i]
+        # print(tmp_condiprob)
 
-        self.conditional = condiprob
+        self.conditional = tmp_condiprob
         # predictions = self.classify(trainingData)
+        # similar as perceptron
+        #
+        # yPrime = self.classify(trainingData)
+        # if y != yPrime
 
 
     def classify(self, testData):
