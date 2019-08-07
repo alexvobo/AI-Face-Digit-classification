@@ -13,7 +13,7 @@
 
 \section{Perceptron}
     \subsection{Extracting}
-        \hspace*{10mm}In the classifier.py, the raw data from training data return a set of pixel features indicating whether each pixel in the provided datum is '0' if it is empty ,or '1' if it is '+' or '\#'. This works occurs at basicFeatureExtractorDigit and basicFeatureExtractorFace functions. For example, the feature will be \{(0,0):0,(0,1):0,(0,2):1...(28,28):.0\}. 
+        \hspace*{10mm}In the classifier.py, the raw data from training data return a set of pixel features indicating whether each pixel in the provided datum is '0' if it is empty ,or '1' if it is '+' or '\#'. This works occurs at basicFeatureExtractorDigit and basicFeatureExtractorFace functions. For example, the data will be \{(0,0):0,(0,1):0,(0,2):1...(28,28):.0\}. 
    
     \subsection{Perceptron Classifier}
         \hspace*{10mm}PerceptronClassifier is called by classifier. Arguments of 'legalLabels' and 'option.iterations' are used. legalLabels is type of list that include 0 to 9 to compare labels. option.iterations is the option with -i that how many repeat the training. The default iteration is 3. That means hidden layers are 3. \newline
@@ -139,7 +139,7 @@
             $self.weights[yPrime].$\_\_$sub$\_\_$(trainingData[i])$
         \end{quote}
             
-    \subsection{Training data}
+    \subsection{Training data \& Analysis}
         \subsubsection{Digit}
             \begin{table}[h]
                 \centering
@@ -214,14 +214,25 @@
                 \caption{Face training data}
             \end{figure}
         \newpage
-    \subsection{analysis}
-        \subsubsection{Digit}
-            To analyze for our accuracy, we calculate percentage of validate data and test data. \newline
-            For valid data with 100 trained, it shows us 69 correct out of 100 (69.0\%). And for test data with 100 trained it shows us 62 correct out of 100 (62.0\%).
-        \subsubsection{Face}
-            To analyze for our accuracy, we calculate percentage of validate data and test data. \newline
-            For valid data with 100 trained, it shows us 98 correct out of 100 (98.0\%). And for test data with 100 trained it shows us 81 correct out of 100 (81.0\%).
 
 \section{Naive Bayes}
+    \subsection{Prior Probability}
+        Our naive Bayes model has several parameters to estimate. One parameter is the prior probability over labels (digits, or face/not-face), $\Pr[Y]$.\\
+        To estimate $\Pr[Y]$, we extract data from training data labels. 
+        \begin{displaymath}
+        \Pr[y] = \frac{c(y)}{n}
+        \end{displaymath}
+        To implemet this formula, we use incrementAll, and normalize function from Counter() class in util.py. First initialize dictionary using Counter class and using incrementAll function, all the label keys to set 0. And then, count all of the label in the training data and save to dictionary, which is total\_cnt\_label in our code. For example, using 100 of labels, it looks \{0: 13, 1: 14, 2: 6, 3: 11, 4: 11, 5: 5, 6: 11, 7: 10, 8: 8, 9: 11\}. Next step is that using normalize function, we divide each value by the sum of all values. For example, it looks \{0: 0.13, 1: 0.14, 2: 0.06, 3: 0.11, 4: 0.11, 5: 0.05, 6: 0.11, 7: 0.1, 8: 0.08, 9: 0.11\}.
+        Final step is that declare self.prior\_probabilty variable and put it in this value so that we can use the other function to calculate base on Naive Bayes. 
+
+    \subsection{Conditional Probabilities}
+        The next estimation is the conditional probabilities of our features given each label y: $\Pr[F_i \vert Y = y]$.
+        \begin{eqnarray*}
+        \Pr[F_i=f_i\vert Y=y] &=& \frac{c(f_i,y)}{\sum_{f'_i\in \{0,1\}}{c(f_i,y)}} \\
+        \end{eqnarray*}
+        First, to calculate the formula in the denominator (${\sum_{f'_i\in \{0,1\}}{c(f_i,y)}}$), we declare total\_features\_labels with util.Counter(). And to get a cost of feature and label set, we extract data from training data. When we use division, to avoid zero error occurs, we set all value as 1 that include keys of 0 and 1.\\ 
+        Second, to calculate the formula in the numerator ($c(f_i,y)$), we declare conditional\_feature\_label with util.Counter(). In this case, we only need to add pixel,which called feature that value is greater than 1. 
+        
+
 
 \end{document}
