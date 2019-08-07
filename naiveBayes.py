@@ -10,7 +10,6 @@ import util
 import classificationMethod
 import math
 
-
 class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     """
     See the project description for the specifications of the Naive Bayes classifier.
@@ -77,12 +76,12 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         # print(total_cnt_label)
         total_cnt_label.normalize()
         self.prior_probability = total_cnt_label
-        # print(self.prior_probability)
+        print(self.prior_probability)
 
         '''
-            Conditional Probability
+            Conditional Probability - likelihood
         '''
-        self.cond_probability = None
+        self.conditional = None
         total_features_labels = util.Counter()  # {}
         conditional_feature_label = util.Counter()
         for i, current in enumerate(trainingData):
@@ -90,23 +89,29 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
             for feature, value in current.items():
                 if value >= 1:
                     conditional_feature_label[feature, real_label] += 1
+                    total_features_labels[feature, real_label] += 1
                 else:
                     total_features_labels[feature, real_label] += 1
 
-        for smooth in kgrid:
-            for label in self.legalLabels:
-                for feature in self.features:
-                    conditional_feature_label[feature, label] += smooth
-                    total_features_labels[feature,label] += smooth
+        '''
+            Smoothing & conditional probability
+        '''
+        for label in self.legalLabels:
+            for feature in self.features:
+                conditional_feature_label[feature, label] += self.k
+                total_features_labels[feature,label] += self.k
 
         condiprob = util.Counter()
-        for x, counts in conditional_feature_label.items():
-            # print(counts)
-            # print(total_features_labels[x])
-            condiprob[x] = counts / total_features_labels[x]
-        # print(codiprob)
+        for i, value in conditional_feature_label.items():
+            print(value)
+            # print(value)
+            # print(total_features_labels[i])
+            condiprob[i] = value / total_features_labels[i]
+        print(condiprob)
 
         self.conditional = condiprob
+        # predictions = self.classify(trainingData)
+
 
     def classify(self, testData):
         """
@@ -143,7 +148,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
             for feature, value in datum.items():
                 # If value for feature is 1, the event 'occurs' and we add the conditional probability,
                 # Otherwise if value is 0, the event does not occur and we add the probability of the event not occuring (1- conditional probability)
-                probability = self.conditional(feature, label) if value > 1 else (1 - self.conditional(feature, label))
+                probability = self.conditional[feature, label] if value >= 1 else (1 - self.conditional[feature, label])
                 logJoint[label] += math.log(probability)
 
         # Return the adjusted probability for label l -> (posterior)
@@ -159,10 +164,3 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
 
         "*** YOUR CODE HERE ***"
         # Calculates the conditional probability of a feature given two labels. Appends the ratio to featuresOdds in tuple form: (feature, ratio)
-        for feature in self.features:
-            featuresOdds.append(feature, (self.conditional(feature, label1) / self.conditional(feature, label2)))
-
-        # Sorts by greatest odds, returns 100 features with highest ratio.
-        # featureRatio is a tuple: (feature, ratio) in featuresOdds, so featureRatio[1] is the ratio in the pair.
-        # DOES NOT WORK PROPERLY YET, NEED TO RETURN JUST THE FEATURES.
-        return sorted(featuresOdds, key=lambda featureRatio: float(featureRatio[1]), reverse=True)[:100]
