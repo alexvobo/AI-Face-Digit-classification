@@ -9,6 +9,8 @@
 import util
 import classificationMethod
 import math
+import time
+
 
 class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
     """
@@ -37,6 +39,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
 
         # might be useful in your code later...
         # this is a list of all features in the training set.
+        start = time.time()
         self.features = list(set([f for datum in trainingData for f in list(datum.keys())]));
 
         if (self.automaticTuning):
@@ -45,6 +48,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
             kgrid = [self.k]
 
         self.trainAndTune(trainingData, trainingLabels, validationData, validationLabels, kgrid)
+        end = time.time()
+        print(end - start)
 
     def trainAndTune(self, trainingData, trainingLabels, validationData, validationLabels, kgrid):
         """
@@ -59,41 +64,34 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         """
 
         "*** YOUR CODE HERE ***"
-        # print(self.legalLabels)
-        # self.prior_probability is using at calculateLogJointProbabilities
         '''
             Prior Probability
         '''
-        self.prior_probability = None
+        self.prior_probability = util.Counter()
         total_cnt_label = util.Counter()
         total_cnt_label.incrementAll(self.legalLabels, 0) # initialize for count how many each numbers have
-        # print(total_cnt_label)
         for label in trainingLabels:
             total_cnt_label.incrementAll([label], 1)
-            # total_cnt_label.normalize()
-        # total_cnt_label.normalize()
-        # print(total_cnt_label)
         total_cnt_label.normalize()
         self.prior_probability = total_cnt_label
-        # print(self.prior_probability)
 
         '''
             Conditional Probability - likelihood
         '''
-        self.conditional = None
-        total_features_labels = util.Counter()  # {}
+        self.conditional = util.Counter()
         non_conditional_feature_label = util.Counter()
         conditional_feature_label = util.Counter()
-        for i,current in enumerate(trainingData):
-            real_label = trainingLabels[i]
+        for idx,current in enumerate(trainingData):
+            real_label = trainingLabels[idx]
             for feature, value in current.items():
-                if value > 0:
+                if value >= 1:
                     conditional_feature_label.incrementAll([(feature, real_label)], 1)
+
                 elif value == 0:
                     non_conditional_feature_label.incrementAll([(feature, real_label)], 1)
 
+        total_features_labels = util.Counter()  # {}
         total_features_labels = conditional_feature_label.__add__(non_conditional_feature_label)
-        # print(total_features_labels)
 
         '''
             Smoothing & conditional probability
@@ -101,19 +99,12 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
 
         for label in self.legalLabels:
             for feature in self.features:
-                self.k = 0.05
                 conditional_feature_label.incrementAll([(feature, label)], self.k)
                 non_conditional_feature_label.incrementAll([(feature, label)], self.k)
 
-        tmp_condiprob = util.Counter()
         for i, value in conditional_feature_label.items():
-            # print(value)
-            # print(i)
-            # print(total_features_labels[i])
-            tmp_condiprob[i] = float(value) / total_features_labels[i]
-        # print(tmp_condiprob)
+            self.conditional[i] = float(value) / float(total_features_labels[i])
 
-        self.conditional = tmp_condiprob
         self.classify(trainingData)
 
 
@@ -127,10 +118,8 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         self.posteriors = []  # Log posteriors are stored for later data analysis (autograder).
         for datum in testData:
             posterior = self.calculateLogJointProbabilities(datum)
-            # print(posterior)
             guesses.append(posterior.argMax())
             self.posteriors.append(posterior)
-            # print(guesses)
         return guesses
 
     def calculateLogJointProbabilities(self, datum):
@@ -147,20 +136,26 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         # Prior = probability of label (number of times label occurs in our trainingLabels out of all the other label values)
         # Datum = (feature,value)
         # loop through all of the legal labels, initialize logJoint[label] to log(prior)
-        # print(self.conditional)
+        test = []
+        test2 = []
         for label in self.legalLabels:
             logJoint[label] = math.log(self.prior_probability[label])
-            # print(logJoint[label])
             # loop through all the features and their values in datum
             # Adjusted probability is the sum of log(prior) and the conditional probability of features given the label.
             for feature, value in datum.items():
                 # If value for feature is 1, the event 'occurs' and we add the conditional probability,
                 # Otherwise if value is 0, the event does not occur and we add the probability of the event not occuring (1- conditional probability)
-                # print(self.conditional[feature,label])
                 probability = self.conditional[feature, label] if value >= 1 else ((1 - self.conditional[feature, label])
-                                                                                   if  (1 - self.conditional[feature, label])> 0 else 1)
+                    if (1 - self.conditional[feature, label]) > 0 else 1) # it will negative value if 1-greater than 1, then it will be error occured,so just set log(1) which is 1
                 logJoint[label] += math.log(probability)
-                # print(logJoint)
+            '''
+            Debugging to solve logJoint[label] += math.log(probability) ValueError: math domain error
+                if value > 0:
+                    test.append(self.conditional[feature,label])
+                else:
+                    if self.conditional[feature,label] > 1: =>> here self.conditional has many greater than 1, so if we do not check then it will be error
+                        test2.append(self.conditional[feature,label])
+            '''
 
         # Return the adjusted probability for label l -> (posterior)
         return logJoint
@@ -174,4 +169,3 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         featuresOdds = []
 
         "*** YOUR CODE HERE ***"
-        # Calculates the conditional probability of a feature given two labels. Appends the ratio to featuresOdds in tuple form: (feature, ratio)
