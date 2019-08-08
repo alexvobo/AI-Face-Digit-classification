@@ -9,8 +9,6 @@
 # This file contains feature extraction methods and harness
 # code for data classification
 
-# import mostFrequent
-import mostFrequent
 import naiveBayes
 import perceptron
 import samples
@@ -137,12 +135,10 @@ def readCommand(argv):
     parser = OptionParser(USAGE_STRING)
 
     parser.add_option('-c', '--classifier', help=default('The type of classifier'),
-                      choices=['mostFrequent', 'nb', 'naiveBayes', 'perceptron'],
-                      default='mostFrequent')
+                      choices=['nb', 'naiveBayes', 'perceptron'],
+                      default='nb')
     parser.add_option('-d', '--data', help=default('Dataset to use'), choices=['digits', 'faces'], default='digits')
     parser.add_option('-t', '--training', help=default('The size of the training set'), default=100, type="int")
-    parser.add_option('-f', '--features', help=default('Whether to use enhanced features'), default=False,
-                      action="store_true")
     parser.add_option('-o', '--odds', help=default('Whether to compute odds ratios'), default=False,
                       action="store_true")
     parser.add_option('-1', '--label1', help=default("First label in an odds ratio comparison"), default=0, type="int")
@@ -164,21 +160,13 @@ def readCommand(argv):
     print("--------------------")
     print(("data:\t\t" + options.data))
     print(("classifier:\t\t" + options.classifier))
-    if not options.classifier == 'minicontest':
-        print(("using enhanced features?:\t" + str(options.features)))
     print(("training set size:\t" + str(options.training)))
     if (options.data == "digits"):
         printImage = ImagePrinter(DIGIT_DATUM_WIDTH, DIGIT_DATUM_HEIGHT).printImage
-        if (options.features):
-            featureFunction = enhancedFeatureExtractorDigit
-        else:
-            featureFunction = basicFeatureExtractorDigit
+        featureFunction = basicFeatureExtractorDigit
     elif (options.data == "faces"):
         printImage = ImagePrinter(FACE_DATUM_WIDTH, FACE_DATUM_HEIGHT).printImage
-        if (options.features):
-            featureFunction = enhancedFeatureExtractorFace
-        else:
-            featureFunction = basicFeatureExtractorFace
+        featureFunction = basicFeatureExtractorFace
     else:
         print(("Unknown dataset", options.data))
         print(USAGE_STRING)
@@ -205,9 +193,7 @@ def readCommand(argv):
             print(USAGE_STRING)
             sys.exit(2)
 
-    if (options.classifier == "mostFrequent"):
-        classifier = mostFrequent.MostFrequentClassifier(legalLabels)
-    elif (options.classifier == "naiveBayes" or options.classifier == "nb"):
+    if (options.classifier == "naiveBayes" or options.classifier == "nb"):
         classifier = naiveBayes.NaiveBayesClassifier(legalLabels)
         classifier.setSmoothing(options.smoothing)
         if (options.autotune):
@@ -236,9 +222,9 @@ USAGE_STRING = """
                   - trains the default mostFrequent classifier on the digit dataset
                   using the default 100 training examples and
                   then test the classifier on test data
-              (2) python classifier.py -c naiveBayes -d digits -t 1000 -f -o -1 3 -2 6 -k 2.5
+              (2) python classifier.py -c naiveBayes -d digits -t 1000 -o -1 3 -2 6 -k 2.5
                   - would run the naive Bayes classifier on 1000 training examples
-                  using the enhancedFeatureExtractorDigits function to get the features
+                  using the basicFeatureExtractorDigits function to get the features
                   on the faces dataset, would use the smoothing parameter equals to 2.5, would
                   test the classifier on the test data and performs an odd ratio analysis
                   with label1=3 vs. label2=6
