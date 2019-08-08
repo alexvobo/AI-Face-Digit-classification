@@ -40,7 +40,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         # might be useful in your code later...
         # this is a list of all features in the training set.
         start = time.time()
-        self.features = list(set([f for datum in trainingData for f in list(datum.keys())]));
+        self.features = list(set([f for datum in trainingData for f in list(datum.keys())]))
 
         if (self.automaticTuning):
             kgrid = [0.001, 0.01, 0.05, 0.1, 0.5, 1, 5, 10, 20, 50]
