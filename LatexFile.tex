@@ -143,9 +143,9 @@
         \subsubsection{Digit}
             \begin{table}[h]
                 \centering
-                \begin{tabular}{c|c|c|c|c}
+                \begin{tabular}{c|c|c|c}
                     \hline
-                        Training Data Used & Labels out of 5000 & Validation Accuracy & Test Accuracy & Time\\
+                        Training Data Used & Labels out of 5000 & Validation Accuracy & Test Accuracy \\
                     \hline
                         10\% & 500 & 81\% & 76\%\\
                     \hline
@@ -170,19 +170,13 @@
                 \end{tabular}
                 \caption{Percentage of training data with iteration 3}
             \end{table}
-            \newpage
-            \begin{figure}[h]
-                \centering
-                    \includegraphics[width=0.3\linewidth]{digitdata.PNG}
-                \caption{Digit training data}
-            \end{figure}
-        
+        \newpage
         \subsubsection{Face}
             \begin{table}[h]
                 \centering
-                \begin{tabular}{c|c|c|c|c}
+                \begin{tabular}{c|c|c|c}
                     \hline
-                        Training Data Used & Labels out of 450 & Validation Accuracy & Test Accuracy & Time\\
+                        Training Data Used & Labels out of 450 & Validation Accuracy & Test Accuracy \\
                     \hline
                         10\% & 45 & 74\% & 62\%\\
                     \hline
@@ -207,16 +201,9 @@
                 \end{tabular}
                 \caption{Percentage of face training data with iteration 3}
             \end{table}
-            
-            \begin{figure}[h]
-                \centering
-                \includegraphics[width=0.3\linewidth]{face.png}
-                \caption{Face training data}
-            \end{figure}
-        \newpage
-
+         
 \section{Naive Bayes}
-    \subsection{Prior Probability}
+    \subsection{Prior Probability in Naive classifier}
         Our naive Bayes model has several parameters to estimate. One parameter is the prior probability over labels (digits, or face/not-face), $\Pr[Y]$.\\
         To estimate $\Pr[Y]$, we extract data from training data labels. 
         \begin{displaymath}
@@ -225,7 +212,7 @@
         To implemet this formula, we use incrementAll, and normalize function from Counter() class in util.py. First initialize dictionary using Counter class and using incrementAll function, all the label keys to set 0. And then, count all of the label in the training data and save to dictionary, which is total\_cnt\_label in our code. For example, using 100 of labels, it looks \{0: 13, 1: 14, 2: 6, 3: 11, 4: 11, 5: 5, 6: 11, 7: 10, 8: 8, 9: 11\}. Next step is that using normalize function, we divide each value by the sum of all values. For example, it looks \{0: 0.13, 1: 0.14, 2: 0.06, 3: 0.11, 4: 0.11, 5: 0.05, 6: 0.11, 7: 0.1, 8: 0.08, 9: 0.11\}.
         Final step is that declare self.prior\_probabilty variable and put it in this value so that we can use the other function to calculate base on Naive Bayes. 
 
-    \subsection{Conditional Probabilities}
+    \subsection{Conditional Probabilities in Naive classifier}
         The next estimation is the conditional probabilities of our features given each label y: $\Pr[F_i \vert Y = y]$.
         \begin{eqnarray*}
         \Pr[F_i=f_i\vert Y=y] &=& \frac{c(f_i,y)}{\sum_{f'_i\in \{0,1\}}{c(f_i,y)}} \\
@@ -234,13 +221,85 @@
         
         Second, to calculate the formula in the numerator ($c(f_i,y)$), we used already declared variable which is conditional\_feature\_label with util.Counter(). In this case, we already added all of information to the variable. \\
         
-        Third step is that we need to smooth our cost of feature and label sets. It helps to improve more accuracy to recognize digit and face. In our project, we fixed smooth value as 0.05 instead default value because 0.05 show us the highest accuracy and reduce running time.\\
+        Third step is that we need to smooth our cost of feature and label sets. It helps to improve more accuracy and reduce overfitting to recognize digit and face. In our project, we fixed smooth value as 0.05 instead default value because 0.05 show us the highest accuracy and reduce running time.\\
         
-        Final step is to get conditional probability. Following the formula, we already have all information to get conditional probability, so we extract value from conditional\_feature\_label and total\_features\_labels. And then divide using that two information and save to variable. To get a posterior probability, we called classify function.
-        
+        Final step is to get conditional probability. Following the formula, we already have all information to get conditional probability, so we extract value from conditional\_feature\_label and total\_features\_labels. And then divide using that two information and save to variable. To get a posterior probability, we called classify function. This function is also called calculateLogJointProbabilities fucntion to calculate log joint probability. As Berkeley project mention, during using Bayes theorem, multiplying many probabilities together often results in underflow, so instead we use log probability. We use characteristic of log that logMN = logM + logN which means log(prior) + log(conditional) which is likelihood.
+        \begin{eqnarray*}
+        \textmd{arg max}_{y} log(P(y \vert f_1, \ldots, f_m) &=& {arg max}_{y} (log(P(y)) + \sum_{i = 1}^m log(P(f_i \vert y)))
+        \end{eqnarray*}
+        For implementing this code, we encountered an issue that 'ValueError: math domain error' was occurred. Ater debugging the code, we found the solution that log must not include less than or equal to 0, so we check if value is less than 0 then we just set 1 to avoid error because log 1 is 0.
         **explain here why log used. ex. logMN = logM + logN. this is why we add in calsthsthsth function
 
+    \subsection{Training data \& Analysis}
+        \subsubsection{digit}
+            \begin{table}[h]
+                \centering
+                \begin{tabular}{c|c|c|c}
+                    \hline
+                        Training Data Used & Labels out of 5000 & Validation Accuracy & Test Accuracy \\
+                    \hline
+                        10\% & 500 & 83\% & 74\%\\
+                    \hline
+                        20\% & 1000 & 80\% & 78\%\\
+                    \hline
+                        30\% & 1500 & 82\% & 79\%\\
+                    \hline
+                        40\% & 2000 & 85\% & 78\%\\
+                    \hline
+                        50\% & 2500 & 84\% & 80\%\\
+                    \hline
+                        60\% & 3000 & 83\% & 82\%\\
+                    \hline
+                        70\% & 3500 & 84\% & 81\%\\
+                    \hline
+                        80\% & 4000 & 82\% & 81\%\\
+                    \hline
+                        90\% & 4500 & 83\% & 79\%\\
+                    \hline
+                        100\% & 5000 & 84\% & 79\%\\
+                    \hline
+                \end{tabular}
+                \caption{Percentage of digit training data}
+            \end{table}
+        \newpage
+        \subsubsection{Face}
+            \begin{table}[h]
+                \centering
+                \begin{tabular}{c|c|c|c}
+                    \hline
+                        Training Data Used & Labels out of 450 & Validation Accuracy & Test Accuracy \\
+                    \hline
+                        10\% & 45 & 68\% & 53\%\\
+                    \hline
+                        20\% & 90 & 95\% & 82\%\\
+                    \hline
+                        30\% & 135 & 98\% & 85\%\\
+                    \hline
+                        40\% & 180 & 98\% & 85\%\\
+                    \hline
+                        50\% & 225 & 97\% & 83\%\\
+                    \hline
+                        60\% & 270 & 97\% & 85\%\\
+                    \hline
+                        70\% & 315 & 97\% & 86\%\\
+                    \hline
+                        80\% & 360 & 97\% & 86\%\\
+                    \hline
+                        90\% & 405 & 95\% & 88\%\\
+                    \hline
+                        100\% & 450 & 95\% & 88\%\\
+                    \hline
+                \end{tabular}
+                \caption{Percentage of face training data with iteration 3}
+            \end{table}
 \section{Conclusion}
 \hspace*{10mm}In the conclusion, the different thing between Perceptron and Naive Bayes is that Perceptron uses weight instead of probability to learning data. On the other hands, Naive Bayes is based on Bayes rule, so it depends on probability to learning data.\\
+    \newpage
+    \subsection{Comparing data \& Analysis }
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=1.0\linewidth]{0809054340386020.jpg}
+    \caption{Comparing between Perceptron and Navie Bayes}
+\end{figure}
 
 \end{document}
