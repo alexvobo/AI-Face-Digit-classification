@@ -43,8 +43,7 @@ class PerceptronClassifier:
         datum is a counter from features to values for those features
         (and thus represents a vector a values).
         """
-        #self.features = list(trainingData[0].keys())  # could be useful later
-        #print(self.features)
+    
         # DO NOT ZERO OUT YOUR WEIGHTS BEFORE STARTING TRAINING, OR
         # THE AUTOGRADER WILL LIKELY DEDUCT POINTS.
 
@@ -86,8 +85,3 @@ class PerceptronClassifier:
         """
 
         "*** YOUR CODE HERE ***"
-
-        "Sorts features using sortedKeys method, which sorts weights from greatest to least. Returns first 100."
-        featuresWeights = self.weights[label].sortedKeys()[:100]
-
-        return featuresWeights
