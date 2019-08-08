@@ -76,7 +76,7 @@ class NaiveBayesClassifier(classificationMethod.ClassificationMethod):
         self.prior_probability = total_cnt_label
 
         '''
-            Conditional Probability - likelihood
+            Conditional Probability
         '''
         self.conditional = util.Counter()
         non_conditional_feature_label = util.Counter()
