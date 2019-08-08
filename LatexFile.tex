@@ -13,12 +13,12 @@
 
 \section{Perceptron}
     \subsection{Extracting}
-        \hspace*{10mm}In the classifier.py, the raw data from training data return a set of pixel features indicating whether each pixel in the provided datum is '0' if it is empty ,or '1' if it is '+' or '\#'. This works occurs at basicFeatureExtractorDigit and basicFeatureExtractorFace functions. For example, the data will be \{(0,0):0,(0,1):0,(0,2):1...(28,28):.0\}. 
+        \hspace*{10mm}In classifier.py, the raw data from training data returns a set of pixel features indicating whether each pixel in the provided datum is '0' if it is empty ,or '1' if it is '+' or '\#'. This occurs in basicFeatureExtractorDigit and basicFeatureExtractorFace functions. For example, the data will be $\{(0,0):0,(0,1):0,(0,2):1...(28,28):.0\}.$ 
    
     \subsection{Perceptron Classifier}
-        \hspace*{10mm}PerceptronClassifier is called by classifier. Arguments of 'legalLabels' and 'option.iterations' are used. legalLabels is type of list that include 0 to 9 to compare labels. option.iterations is the option with -i that how many repeat the training. The default iteration is 3. That means hidden layers are 3. \newline
+        \hspace*{10mm}The Perceptron classifier is called by classifier.py. Arguments of 'legalLabels' and 'option.iterations' are used. ‘LegalLabels’ is a list that uses 0 to 9 to compare labels for digits, and 0 to 1 for faces. ‘option.iterations’ is the option with -i that indicates how many to repeat the training. The default iteration is 3. That means hidden layers are 3. \newline
         For each layer, we scan one instance at a time and find the label with the highest score. To get a high score, we set y as real label and y' is guess label. The guess label can get from this formula \ y' = arg max score(feature, y")\ . \newline
-        To get y', guessed label, we use classify function in perceptron class. Multiply weight[label] and current data as datum. It means multiply each features of value and then return the sum of the values to vector which is type of list. 
+        To get y', the guessed label, we use classify function in perceptron.py. We Multiply weight[label] and current data, datum. This means multiplying each features of value and then return the sum of the values to vector which is type of list. 
         For example,  
         \begin{quote}
             vectors[l] = weights[l] * datum\\
@@ -30,8 +30,8 @@
         \end{quote}
         After calculating all of the vectors, we choose the maximum number in the vector list and using argMax function, which is in util.py, we return the highest key of the highest value.
         
-        And then, We compare y and y'. If y and y' are same then skip. If y and y' are not matching. It means that we guessed y' but we should have guessed y. The weight of y should have scored f higher and weight of y' should have scored f lower. \newline
-        In our code, for example, we used 100 of training data to see how y and y' work. \newline
+        And then, We compare y and y'. If y and y' are same then skip because we guessed correctly. If y and y' are not matching. It means that we guessed y' but we should have guessed y. The weight of y should have scored f higher and weight of y' should have scored f lower. \newline
+        In our code, for example, we used training data to see how y and y' work. \newline
         \begin{quote}
         ('Starting iteration ', 0, '...')\\
         We have guessed 0 but should have guessed 5\\
@@ -143,9 +143,9 @@
         \subsubsection{Digit}
             \begin{table}[h]
                 \centering
-                \begin{tabular}{c|c|c|c}
+                \begin{tabular}{c|c|c|c|c}
                     \hline
-                        Training Data Used & Labels out of 5000 & Validation Accuracy & Test Accuracy \\
+                        Training Data Used & Labels out of 5000 & Validation Accuracy & Test Accuracy & Time\\
                     \hline
                         10\% & 500 & 81\% & 76\%\\
                     \hline
@@ -180,9 +180,9 @@
         \subsubsection{Face}
             \begin{table}[h]
                 \centering
-                \begin{tabular}{c|c|c|c}
+                \begin{tabular}{c|c|c|c|c}
                     \hline
-                        Training Data Used & Labels out of 450 & Validation Accuracy & Test Accuracy \\
+                        Training Data Used & Labels out of 450 & Validation Accuracy & Test Accuracy & Time\\
                     \hline
                         10\% & 45 & 74\% & 62\%\\
                     \hline
@@ -230,9 +230,17 @@
         \begin{eqnarray*}
         \Pr[F_i=f_i\vert Y=y] &=& \frac{c(f_i,y)}{\sum_{f'_i\in \{0,1\}}{c(f_i,y)}} \\
         \end{eqnarray*}
-        First, to calculate the formula in the denominator (${\sum_{f'_i\in \{0,1\}}{c(f_i,y)}}$), we declare total\_features\_labels with util.Counter(). And to get a cost of feature and label set, we extract data from training data. When we use division, to avoid zero error occurs, we set all value as 1 that include keys of 0 and 1.\\ 
-        Second, to calculate the formula in the numerator ($c(f_i,y)$), we declare conditional\_feature\_label with util.Counter(). In this case, we only need to add pixel,which called feature that value is greater than 1. 
+        First, getting a cost of feature and label set, we extract data from training data. While extracting data, to calculate the formula in the denominator (${\sum_{f'_i\in \{0,1\}}{c(f_i,y)}}$), we declare conditional\_feature\_label with util.Counter() for counting value 1 which means that during searching pixels and if pixel is 1 then increment 1. We also declare non\_conditional\_feature\_label for counting value 0. For example, the format of these two variables look like \{(feature, label):value ... \} and this is for real example from our code $\{((4, 23), 5): 1, ((4, 24), 5): 1, ((5, 23), 5): 1,...\}$. Following the formula which denominator, we declare total\_features\_labels and add conditional\_feature\_label with non\_conditional\_feature\_label.
         
+        Second, to calculate the formula in the numerator ($c(f_i,y)$), we used already declared variable which is conditional\_feature\_label with util.Counter(). In this case, we already added all of information to the variable. \\
+        
+        Third step is that we need to smooth our cost of feature and label sets. It helps to improve more accuracy to recognize digit and face. In our project, we fixed smooth value as 0.05 instead default value because 0.05 show us the highest accuracy and reduce running time.\\
+        
+        Final step is to get conditional probability. Following the formula, we already have all information to get conditional probability, so we extract value from conditional\_feature\_label and total\_features\_labels. And then divide using that two information and save to variable. To get a posterior probability, we called classify function.
+        
+        **explain here why log used. ex. logMN = logM + logN. this is why we add in calsthsthsth function
 
+\section{Conclusion}
+\hspace*{10mm}In the conclusion, the different thing between Perceptron and Naive Bayes is that Perceptron uses weight instead of probability to learning data. On the other hands, Naive Bayes is based on Bayes rule, so it depends on probability to learning data.\\
 
 \end{document}
