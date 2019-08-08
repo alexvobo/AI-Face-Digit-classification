@@ -149,7 +149,7 @@ def readCommand(argv):
     parser.add_option('-2', '--label2', help=default("Second label in an odds ratio comparison"), default=1, type="int")
     parser.add_option('-w', '--weights', help=default('Whether to print weights'), default=False, action="store_true")
     parser.add_option('-k', '--smoothing', help=default("Smoothing parameter (ignored when using --autotune)"),
-                      type="float", default=2.0)
+                      type="float", default=0.05)
     parser.add_option('-a', '--autotune', help=default("Whether to automatically tune hyperparameters"), default=False,
                       action="store_true")
     parser.add_option('-i', '--iterations', help=default("Maximum iterations to run training"), default=3, type="int")
